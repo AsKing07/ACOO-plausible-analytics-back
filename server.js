@@ -1,9 +1,11 @@
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const plausibleRoutes = require('./routes/plausible');
+const docsRoutes = require('./routes/docs');
 const errorHandler = require('./middleware/errorHandler');
 const logger = require('./middleware/logger');
 
@@ -13,7 +15,10 @@ if (typeof logger !== 'function') {
 }
 
 const app = express();
+ //Utiliser dotenv pour charger les variables d'environnement
 const PORT = process.env.PORT || 3000;
+
+
 
 // Configuration du rate limiting
 const limiter = rateLimit({
@@ -48,6 +53,7 @@ app.use(express.static('public'));
 
 // Routes
 app.use('/api/plausible', plausibleRoutes);
+app.use('/api/docs', docsRoutes);
 
 // Route de santé
 app.get('/health', (req, res) => {

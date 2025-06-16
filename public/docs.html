@@ -1,0 +1,47 @@
+
+<html lang="fr">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Documentation API Plausible Analytics</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    h1 { color: #2c3e50; }
+    code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+    .endpoint { margin-bottom: 2em; }
+  </style>
+</head>
+<body>
+  <h1>Documentation API Plausible Analytics</h1>
+  <div class="endpoint">
+    <h2>GET /api/plausible/realtime</h2>
+    <p>Obtenir le nombre de visiteurs en temps réel.</p>
+    <strong>Query :</strong> <code>site_id</code> (string, requis)<br>
+    <strong>Header :</strong> <code>Authorization: Bearer &lt;API_KEY&gt;</code>
+  </div>
+  <div class="endpoint">
+    <h2>GET /api/plausible/timeseries</h2>
+    <p>Obtenir les données de série temporelle.</p>
+    <strong>Query :</strong> <code>site_id</code> (string, requis), <code>period</code> (string), <code>metrics</code> (string), <code>interval</code> (string), <code>date</code> (string, si period=custom)<br>
+    <strong>Header :</strong> <code>Authorization: Bearer &lt;API_KEY&gt;</code>
+  </div>
+  <div class="endpoint">
+    <h2>GET /api/plausible/breakdown/:property</h2>
+    <p>Obtenir les données de répartition par propriété.</p>
+    <strong>Paramètre URL :</strong> <code>property</code> (string, requis)<br>
+    <strong>Query :</strong> <code>site_id</code> (string, requis), <code>period</code> (string), <code>metrics</code> (string), <code>limit</code> (number)<br>
+    <strong>Header :</strong> <code>Authorization: Bearer &lt;API_KEY&gt;</code>
+  </div>
+  <div class="endpoint">
+    <h2>GET /api/plausible/aggregate</h2>
+    <p>Obtenir les métriques agrégées.</p>
+    <strong>Query :</strong> <code>site_id</code> (string, requis), <code>period</code> (string), <code>metrics</code> (string), <code>compare</code> (boolean), <code>filters</code> (string)<br>
+    <strong>Header :</strong> <code>Authorization: Bearer &lt;API_KEY&gt;</code>
+  </div>
+  <div class="endpoint">
+    <h2>POST /api/plausible/test-connection</h2>
+    <p>Tester la connexion à l'API Plausible.</p>
+    <strong>Body (JSON) :</strong> <code>api_key</code> (string, requis), <code>site_id</code> (string, requis)
+  </div>
+</body>
+</html>

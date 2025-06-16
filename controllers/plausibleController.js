@@ -1,6 +1,6 @@
 const plausibleService = require('../services/plausibleService');
 const cache = require('../utils/cache');
-const logger = require('../middleware/logger');
+const {loggerInstance: logger} = require('../middleware/logger');
 
 class PlausibleController {
   /**

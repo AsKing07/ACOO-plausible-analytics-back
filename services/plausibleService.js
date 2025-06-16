@@ -112,33 +112,37 @@ async getTimeseries(apiKey, params) {
   /**
    * Obtenir les données de répartition avec l'API v2
    */
-  async getBreakdown(apiKey, params) {
-    try {
-      const client = this.createAxiosInstance(apiKey);
-      
-      const queryBody = {
-        site_id: params.site_id,
-        metrics: params.metrics,
-        date_range: params.period,
-        dimensions: [params.property],
-        limit: params.limit
-      };
-      
-      const response = await client.post(`/${this.apiVersion}/query`, queryBody);
-      
-      loggerInstance.info(`Breakdown data retrieved for ${params.site_id}:${params.property}`);
-      
-      return {
-        results: response.data.results,
-        query: queryBody,
-        meta: response.data.meta
-      };
-      
-    } catch (error) {
-      loggerInstance.error(`Erreur getBreakdown pour ${params.site_id}:`, error.message);
-      this.handlePlausibleError(error);
+async getBreakdown(apiKey, params) {
+  try {
+    const client = this.createAxiosInstance(apiKey);
+
+    // Construction dynamique du body
+    const queryBody = {
+      site_id: params.site_id,
+      property: params.property,
+      metrics: params.metrics,
+      date_range: params.period
+    };
+    // N’ajoute limit que si c’est explicitement supporté par l’API Plausible
+    if (params.limit !== undefined && params.limit !== null && params.limit !== '') {
+      queryBody.limit = params.limit;
     }
+
+    const response = await client.post(`/${this.apiVersion}/breakdown`, queryBody);
+
+    loggerInstance.info(`Breakdown data retrieved for ${params.site_id}`);
+
+    return {
+      results: response.data.results,
+      query: queryBody,
+      meta: response.data.meta
+    };
+
+  } catch (error) {
+    loggerInstance.error(`Erreur getBreakdown pour ${params.site_id}:`, error.message);
+    this.handlePlausibleError(error);
   }
+}
   
   /**
    * Obtenir les métriques agrégées avec l'API v2

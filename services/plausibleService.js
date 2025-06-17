@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const axios = require('axios');
 const {loggerInstance} = require('../middleware/logger');
 
@@ -28,6 +30,7 @@ class PlausibleService {
    */
   handlePlausibleError(error) {
     if (error.response) {
+      console.log('Plausible API Error:', error.response.data);
       const { status, data } = error.response;
       
       switch (status) {
@@ -83,18 +86,20 @@ async getTimeseries(apiKey, params) {
   try {
     const client = this.createAxiosInstance(apiKey);
 
-    // Construction dynamique du body sans interval si non fourni explicitement
-    const queryBody = {
+    let queryBody = {
       site_id: params.site_id,
       metrics: params.metrics,
       date_range: params.period
     };
-    if (typeof params.interval !== 'undefined' && params.interval !== null && params.interval !== '') {
-      queryBody.interval = params.interval;
+
+    if (params.dimensions) {
+      queryBody.dimensions = Array.isArray(params.dimensions)
+      ? params.dimensions
+      : [params.dimensions];
     }
 
     const response = await client.post(`/${this.apiVersion}/query`, queryBody);
-
+    
     loggerInstance.info(`Timeseries data retrieved for ${params.site_id}`);
 
     return {
@@ -108,7 +113,7 @@ async getTimeseries(apiKey, params) {
     this.handlePlausibleError(error);
   }
 }
-  
+
   /**
    * Obtenir les données de répartition avec l'API v2
    */
@@ -119,16 +124,17 @@ async getBreakdown(apiKey, params) {
     // Construction dynamique du body
     const queryBody = {
       site_id: params.site_id,
-      property: params.property,
       metrics: params.metrics,
       date_range: params.period
     };
-    // N’ajoute limit que si c’est explicitement supporté par l’API Plausible
-    if (params.limit !== undefined && params.limit !== null && params.limit !== '') {
-      queryBody.limit = params.limit;
+ 
+    if (params.dimensions) {
+      queryBody.dimensions = Array.isArray(params.dimensions)
+        ? params.dimensions
+        : [params.dimensions];
     }
 
-    const response = await client.post(`/${this.apiVersion}/breakdown`, queryBody);
+    const response = await client.post(`/${this.apiVersion}/query`, queryBody);
 
     loggerInstance.info(`Breakdown data retrieved for ${params.site_id}`);
 

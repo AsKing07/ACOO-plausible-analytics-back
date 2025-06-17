@@ -22,7 +22,7 @@ router.get('/realtime',
 /**
  * @route   GET /api/plausible/timeseries
  * @desc    Obtenir les données de série temporelle
- * @query   site_id (string, requis), period (string), metrics (string), interval (string), date (string, si period=custom)
+ * @query   site_id (string, requis), period (string), metrics (string), dimensions (string/array)
  * @header  Authorization: Bearer <API_KEY>
  */
 router.get('/timeseries', 
@@ -33,11 +33,10 @@ router.get('/timeseries',
 /**
  * @route   GET /api/plausible/breakdown/:property
  * @desc    Obtenir les données de répartition par propriété
- * @param   property (string, requis dans l'URL)
- * @query   site_id (string, requis), period (string), metrics (string), limit (number)
+ * @query   site_id (string, requis), period (string), metrics (string),  dimensions (string/array)
  * @header  Authorization: Bearer <API_KEY>
  */
-router.get('/breakdown/:property', 
+router.get('/breakdown', 
   validate(plausibleSchemas.breakdown), 
   plausibleController.getBreakdown
 );

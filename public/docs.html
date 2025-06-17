@@ -22,14 +22,14 @@
   <div class="endpoint">
     <h2>GET /api/plausible/timeseries</h2>
     <p>Obtenir les données de série temporelle.</p>
-    <strong>Query :</strong> <code>site_id</code> (string, requis), <code>period</code> (string), <code>metrics</code> (string), <code>interval</code> (string), <code>date</code> (string, si period=custom)<br>
+    <strong>Query :</strong> <code>site_id</code> (string, requis), <code>period</code> (string), <code>dimensions</code> (string/array) <br>
     <strong>Header :</strong> <code>Authorization: Bearer &lt;API_KEY&gt;</code>
   </div>
   <div class="endpoint">
     <h2>GET /api/plausible/breakdown/:property</h2>
     <p>Obtenir les données de répartition par propriété.</p>
     <strong>Paramètre URL :</strong> <code>property</code> (string, requis)<br>
-    <strong>Query :</strong> <code>site_id</code> (string, requis), <code>period</code> (string), <code>metrics</code> (string), <code>limit</code> (number)<br>
+    <strong>Query :</strong> <code>site_id</code> (string, requis), <code>period</code> (string), <code>metrics</code> (string), <code>dimensions</code> (string/array)<br>
     <strong>Header :</strong> <code>Authorization: Bearer &lt;API_KEY&gt;</code>
   </div>
   <div class="endpoint">
@@ -42,6 +42,26 @@
     <h2>POST /api/plausible/test-connection</h2>
     <p>Tester la connexion à l'API Plausible.</p>
     <strong>Body (JSON) :</strong> <code>api_key</code> (string, requis), <code>site_id</code> (string, requis)
+  </div>
+
+
+  <div class="metrics">
+    <h2>Métriques disponibles :</h2>
+    <ul>
+
+      <li><code>visits</code> : Nombre de visites/sessions </li>
+      <li><code>visitors</code> : Nombre de visiteurs uniques</li>
+      <li><code>pageviews</code> : Nombre de pages vues</li>
+      <li><code>bounce_rate</code> : Taux de rebond</li>
+      <li><code>time_on_site</code> : Temps passé sur le site</li>
+      <li><code>visit_duration</code> : Durée moyenne des visites</li>
+      <li><code>events</code> : Nombre d'événements personnalisés</li>
+      <li><code>unique_events</code> : Nombre d'événements personnalisés uniques</li>
+      <li><code>new_visitors</code> : Nombre de nouveaux visiteurs</li>
+        <li><code>returning_visitors</code> : Nombre de visiteurs de retour</li>
+        <li><code>top_pages</code> : Pages les plus visitées</li>
+        <li><code>top_events</code> : Événements les plus fréquents</li>
+    </ul>
   </div>
 </body>
 </html>

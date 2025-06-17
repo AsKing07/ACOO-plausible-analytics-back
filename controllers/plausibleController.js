@@ -40,64 +40,70 @@ class PlausibleController {
   /**
    * Obtenir les données de série temporelle
    */
-  async getTimeseries(req, res, next) {
-    try {
-      const { site_id, period = '7d', metrics = 'visitors', interval = 'date' } = req.query;
-      const apiKey = req.headers.authorization?.replace('Bearer ', '');
-      
-      const cacheKey = `timeseries:${site_id}:${period}:${metrics}:${interval}`;
-      const cachedData = cache.get(cacheKey);
-      
-      if (cachedData) {
-        logger.info(`Cache hit pour timeseries: ${site_id}`);
-        return res.json(cachedData);
-      }
-      
-      const data = await plausibleService.getTimeseries(apiKey, {
-        site_id,
-        period,
-        metrics: metrics.split(','),
-        interval
-      });
-      
-      // Cache pour 5 minutes
-      cache.set(cacheKey, data, 300);
-      
-      res.json({
-        success: true,
-        data: data,
-        params: { site_id, period, metrics, interval },
-        timestamp: new Date().toISOString()
-      });
-      
-    } catch (error) {
-      next(error);
+async getTimeseries(req, res, next) {
+  try {
+    const { site_id, period = '7d', metrics = 'visitors', dimensions=['time:day'] } = req.query;
+    const apiKey = req.headers.authorization?.replace('Bearer ', '');
+
+    const cacheKey = `timeseries:${site_id}:${period}:${metrics}:${dimensions || 'none'}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      logger.info(`Cache hit pour timeseries: ${site_id}`);
+      return res.json(cachedData);
     }
+
+    // Prépare les params - plus propre
+    const params = {
+      site_id,
+      period,
+      metrics: metrics.split(','),
+      ...(dimensions && { dimensions })// Spread conditionnel
+    };
+
+    const data = await plausibleService.getTimeseries(apiKey, params);
+    cache.set(cacheKey, data, 300);
+
+    res.json({
+      success: true,
+      data: data,
+      params: { site_id, period, metrics, ...(dimensions && { dimensions }) },
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    next(error);
   }
+}
+
   
   /**
    * Obtenir les données de répartition
    */
   async getBreakdown(req, res, next) {
-    try {
-      const { property } = req.params;
-      const { site_id, period = '7d', metrics = 'visitors', limit = 10 } = req.query;
+    try {if (typeof req.query.dimensions === 'string') {
+  req.query.dimensions = [req.query.dimensions];
+}
+     
+      const { site_id, period = '7d', metrics = 'visitors',  dimensions=['visit:country'] } = req.query;
+      
       const apiKey = req.headers.authorization?.replace('Bearer ', '');
       
-      const cacheKey = `breakdown:${site_id}:${property}:${period}:${metrics}:${limit}`;
+      const cacheKey = `breakdown:${site_id}:${dimensions}:${period}:${metrics}`;
       const cachedData = cache.get(cacheKey);
       
       if (cachedData) {
-        logger.info(`Cache hit pour breakdown: ${site_id}:${property}`);
+        logger.info(`Cache hit pour breakdown: ${site_id}:${dimensions}`);
         return res.json(cachedData);
       }
       
       const data = await plausibleService.getBreakdown(apiKey, {
         site_id,
-        property,
+ 
         period,
         metrics: metrics.split(','),
-        limit: parseInt(limit)
+        dimensions: Array.isArray(dimensions) ? dimensions : [dimensions]
+
       });
       
       // Cache pour 10 minutes
@@ -106,7 +112,7 @@ class PlausibleController {
       res.json({
         success: true,
         data: data,
-        params: { site_id, property, period, metrics, limit },
+        params: { site_id, dimensions, period, metrics},
         timestamp: new Date().toISOString()
       });
       

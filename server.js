@@ -95,8 +95,9 @@ process.on('uncaughtException', (error) => {
 // Démarrage du serveur
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
-  console.log(`📊 API Plausible disponible sur http://localhost:${PORT}`);
-  console.log(`🌐 Documentation: http://localhost:${PORT}/api-docs`);
+
+  console.log(`🌐 Endpoint de santé: /health`);
+  console.log(`📚 Documentation: /api-docs`);
 });
 
 module.exports = app;

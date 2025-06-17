@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 3000;
 // Configuration du rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limite de 100 requêtes par fenêtre
+  max: 150, // limite de 150 requêtes par fenêtre
   message: {
     error: 'Trop de requêtes depuis cette IP, réessayez plus tard.'
   }
@@ -35,7 +35,7 @@ app.use(limiter);
 
 // Configuration CORS
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true,
   optionsSuccessStatus: 200
 };
@@ -66,17 +66,9 @@ app.get('/health', (req, res) => {
 
 // Route par défaut
 app.get('/', (req, res) => {
-  res.json({
-    message: 'API Plausible Analytics',
-    version: '1.0.0',
-    endpoints: {
-      realtime: '/api/plausible/realtime',
-      timeseries: '/api/plausible/timeseries',
-      breakdown: '/api/plausible/breakdown',
-      aggregate: '/api/plausible/aggregate'
-    }
-  });
+  res.redirect('/api/docs');
 });
+
 
 // Gestion des routes non trouvées
 app.all('/{*any}', (req, res) => {

@@ -31,7 +31,7 @@ const limiter = rateLimit({
 
 // Middlewares de sécurité
 app.use(helmet());
-app.use(limiter);
+// app.use(limiter);
 
 // Configuration CORS
 const corsOptions = {
